@@ -87,7 +87,7 @@ describe Monadic::Either do
     Success.should === Either("string")
   end
 
-  it 'works' do
+  it 'coerces a nil result within the bind block' do
     either = Either(true).
               bind lambda { User.find(-1) }
     either.failure?.should be_true
@@ -189,20 +189,38 @@ describe Monadic::Either do
     Failure(3).failure?.should be_true
   end
 
-  it 'supports Either.chain' do
-    Either.chain do
-      bind lambda { Success(1) }
-      bind lambda { Success(2) }
-    end.should == Success(2)
+  if RUBY_VERSION == '1.8.7'
+    it 'supports Either.chain' do
+      Either.chain do
+        bind lambda { Success(1) }
+        bind lambda { Success(2) }
+      end.should == Success(2)
 
-    Either.chain do
-      bind lambda    { Success(1)     }
-      bind lambda    { |p| Success(p + 1) }
-    end.should == Success(2)
+      Either.chain do
+        bind lambda    { Success(1)     }
+        bind lambda    { |p| Success(p + 1) }
+      end.should == Success(2)
 
-    Either.chain do
-      bind { Success(1) }
-    end.should == Success(1)
+      Either.chain do
+        bind { Success(1) }
+      end.should == Success(1)
+    end
+  else # need to be sure the advertised syntax works in ruby 1.9
+    it 'supports Either.chain' do
+      Either.chain do
+        bind -> { Success(1) }
+        bind -> { Success(2) }
+      end.should == Success(2)
+
+      Either.chain do
+        bind ->    { Success(1)     }
+        bind ->(p) { Success(p + 1) }
+      end.should == Success(2)
+
+      Either.chain do
+        bind { Success(1) }
+      end.should == Success(1)
+    end
   end
 
   it 'README example' do

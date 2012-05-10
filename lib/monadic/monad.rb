@@ -29,7 +29,7 @@ module Monadic
     def map(proc = nil, &block)
       func = (proc || block)
       # Treat 1.9 and 1.8 strings the same way
-      return self.class.unit(@value.map {|v| func.call(v) }) if @value.is_a?(::Enumerable) unless @value.is_a?(String)
+      return self.class.unit(@value.map {|v| func.call(v) }) if @value.is_a?(::Enumerable)  && not(@value.is_a?(String))
       return self.class.unit(func.call(@value))
     end
 

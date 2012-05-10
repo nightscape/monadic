@@ -24,7 +24,7 @@ module Monadic
       return concat(proc) if proc.is_a? Either
 
       begin
-        Either(call(proc, block))
+        Either(call(proc || block))
       rescue StandardError => error
         Failure(error)      
       end
@@ -47,8 +47,7 @@ module Monadic
     end
 
     private
-    def call(proc, block)
-      func = (proc || block)
+    def call(func)
       raise "No block or lambda given" unless func.is_a? Proc
       (func.arity == 0 ? func.call : func.call(@value)) || Failure(nil)
     end

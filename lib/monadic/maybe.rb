@@ -19,7 +19,7 @@ module Monadic
     # @return [Failure, Success] the Maybe Monad filtered with the block or proc expression
     def select(proc = nil, &block)
       # Treat 1.9 and 1.8 strings the same way
-      return Maybe(@value.select(&block)) if @value.is_a?(::Enumerable) unless @value.is_a?(String)
+      return Maybe(@value.select(&block)) if @value.is_a?(::Enumerable) && not(@value.is_a?(String))
       return Nothing unless (proc || block).call(@value)
       return self
     end
