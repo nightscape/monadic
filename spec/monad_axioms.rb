@@ -5,7 +5,7 @@ shared_examples 'a Monad' do
     it '1st monadic law: left-identity' do
       f = ->(value) { monad.unit(value + 1) }
       monad::unit(1).bind do |value|
-        f.(value)
+        f.call(value)
       end.should == f.(1)
     end
 
@@ -16,18 +16,18 @@ shared_examples 'a Monad' do
     end
 
     it '3rd monadic law: associativity' do 
-      f = ->(value) { monad.unit(value + 1)   }
-      g = ->(value) { monad.unit(value + 100) }    
+      f = lambda {|value| monad.unit(value + 1)   }
+      g = lambda {|value| monad.unit(value + 100) }    
 
       id1 = monad.unit(1).bind do |a|
-        f.(a)
+        f.call(a)
       end.bind do |b| 
-        g.(b) 
+        g.call(b) 
       end
 
       id2 = monad.unit(1).bind do |a|
-        f.(a).bind do |b|
-          g.(b)
+        f.call(a).bind do |b|
+          g.call(b)
         end
       end
 
