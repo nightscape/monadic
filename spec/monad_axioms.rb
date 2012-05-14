@@ -55,3 +55,4 @@ shared_examples 'a Monad' do
     end
   end
 end
+
